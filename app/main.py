@@ -18,7 +18,7 @@ app = FastAPI(
 """,
     servers=[
         {
-            "url": "https://xxxx.xxx.jp",
+            "url": "http://localhost:8002",
             "description": "Prod Server"
         }
     ],

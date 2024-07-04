@@ -138,6 +138,10 @@ async def extract(url: str, cache_seconds: int = 600):
                                 url=url, include_images=False, with_metadata=True)
         
         extract_data = json.loads(extract_result)
+        
+        extract_data["source_hostname"] = extract_data["source-hostname"]
+        del extract_data["source-hostname"]
+        
         await saveCache(url, extract_data)
         return extract_data
     

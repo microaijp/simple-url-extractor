@@ -5,4 +5,4 @@ services:
     build: .
     restart: always
     ports:
-      - "8200:8002"
+      - "8002:8002"

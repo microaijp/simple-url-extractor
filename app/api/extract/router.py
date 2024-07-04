@@ -38,7 +38,8 @@ async def v1_route(url: str, cache_seconds: int = 600):
     """
     from libs.extractor import extract
     try:
-        return await extract(url=url, cache_seconds=cache_seconds)
+        result = await extract(url=url, cache_seconds=cache_seconds)
+        return result
     except Exception as e:
         raise HTTPException(
             status_code=500,
