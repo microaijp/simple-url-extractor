@@ -137,6 +137,9 @@ async def extract(url: str, cache_seconds: int = 600):
         extract_result = trafilatura_extract(html, output_format='json',
                                 url=url, include_images=False, with_metadata=True)
         
+        if extract_result == None:
+            raise Exception("No data extracted")
+        
         extract_data = json.loads(extract_result)
         
         extract_data["source_hostname"] = extract_data["source-hostname"]
