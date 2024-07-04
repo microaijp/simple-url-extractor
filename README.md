@@ -51,7 +51,7 @@ $ cd app
 $ uvicorn main:app --reload --port 8002
 ```
 Access http://localhost:8002/docs in your browser.  
-The port can be changed in app/main.py.
+The port can be changed in `app/main.py`.
 
 ## Docker
 ### Building the Docker Image
