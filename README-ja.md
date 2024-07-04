@@ -1,18 +1,19 @@
 [![Python versions](https://img.shields.io/pypi/pyversions/trafilatura.svg)](https://pypi.python.org/pypi/trafilatura)
 
 # simple-url-extractor
-A simple API that extracts the title, body, and more from a specified URL.  
-It uses [trafilatura](https://trafilatura.readthedocs.io/en/latest/) 99% of the time.
+URLを指定すると、タイトル、本文などを抽出するシンプルなAPIです。  
+99% [trafilatura](https://trafilatura.readthedocs.io/en/latest/) を使用しています。
 
-## API Call
-### Request
+
+## APIコール
+### リクエスト
 ```
 curl -X 'GET' \
   'http://localhost:8002/v1/extract?url=https%3A%2F%2Fmicroai.jp%2Fblog%2F70b4bf89-fe4b-451f-ac81-2d757fca8b6a&cache_seconds=1' \
   -H 'accept: application/json'
 ```
 
-### Response
+### レスポンス
 ```
 {
   "title": "Difyのバージョンが v0.6.11からv0.6.12 に上がったので、Kubernetes で運用しているDifyのバージョンアップを行ってみる | microAI",
@@ -37,33 +38,33 @@ curl -X 'GET' \
 }
 ```
 
-## Setup using pipenv
+## pipenv を使ったセットアップ
 ```
 $ cd /path/to/this-app
 $ pipenv shell
 $ pipenv install
 ```
 
-## Local Launch
+## ローカル起動
 ```
 $ cd /path/to/this-app
 $ cd app
 $ uvicorn main:app --reload --port 8002
 ```
-Access http://localhost:8002/docs in your browser.  
-The port can be changed in app/main.py.
+http://localhost:8002/docs にブラウザでアクセス  
+ポートは、`app/main.py` で変更可能です
 
 ## Docker
-### Building the Docker Image
+### Dockerイメージのビルド
 ```
 $ cd /path/to/this-app
 $ docker build -t simple-url-extractor .
 ```
 
-### Starting the Docker Container
+### Dockerコンテナの起動
 ```
 $ cd /path/to/this-app
 $ docker-compose up -d
 ```
-Access http://localhost:8002/docs in your browser.  
-The port can be changed in `docker-compose.yml`.
+http://localhost:8002/docs にブラウザでアクセス  
+ポートは、`docker-compose.yml` で変更可能です
