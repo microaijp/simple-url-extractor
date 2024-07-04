@@ -6,7 +6,17 @@ import json
 
 async def getHTML(url: str) -> str:
     """
-    指定されたURLからHTMLを取得する非同期関数
+    Fetches the HTML content of a given URL.
+
+    Args:
+        url (str): The URL to fetch the HTML content from.
+
+    Returns:
+        str: The HTML content of the URL.
+
+    Raises:
+        httpx.RequestError: If there is an error making the HTTP request.
+        Exception: If there is any other error during the process.
     """
     
     headers = {
@@ -46,34 +56,44 @@ async def getHTML(url: str) -> str:
 
 async def cleanUpHtml(html: str):
     """
-    HTMLからコメント、CDATA、不要なタグを削除する
+    Cleans up the HTML by removing unwanted elements and attributes.
+
+    Args:
+        html (str): The HTML string to be cleaned up.
+
+    Returns:
+        str: The cleaned up HTML string.
+
+    Raises:
+        Exception: If an error occurs during the cleaning process.
     """
     
     try:
+        # remove unwanted elements and attributes
         soup = BeautifulSoup(html, 'html.parser')
         
-        # コメントを削除
+        # remove comments and cdata
         comments = soup.findAll(text=lambda text:isinstance(text, Comment))
         for comment in comments:
             comment.extract()
         
-        # CDATAを削除
+        # remove cdata
         cdatas = soup.findAll(text=lambda text:isinstance(text, CData))
         for cdata in cdatas:
             cdata.extract()
         
-        # 不要なタグを削除
+        # remove unwanted tags
         tags_to_remove = ['script', 'style', 'nav', 'footer', 'aside', 'form', 'iframe']
         for tag in tags_to_remove:
             for element in soup.find_all(tag):
                 element.decompose()
         
-        # application/ld+jsonを削除
+        # remove unwanted attributes
         json_ld_scripts = soup.find_all('script', type='application/ld+json')
         for script in json_ld_scripts:
             script.decompose()
-            
-        # 不要な属性を削除（例：style属性）
+        
+        # remove style attributes
         for tag in soup.find_all(True):
             if 'style' in tag.attrs:
                 del tag.attrs['style']
@@ -85,14 +105,25 @@ async def cleanUpHtml(html: str):
     
 async def extract(url: str, cache_seconds: int = 600):
     """
+    Extracts information from a given URL.
+
+    Args:
+        url (str): The URL to extract information from.
+        cache_seconds (int, optional): The number of seconds to cache the extracted information. Defaults to 600.
+
+    Returns:
+        dict: A dictionary containing the extracted information.
+
+    Raises:
+        Exception: If there is an error during the extraction process.
     """
     
     from libs.cache import getCache, saveCache
     
     # check cache
-    # cache = await getCache(url, cache_seconds)
-    # if cache:
-    #     return cache
+    cache = await getCache(url, cache_seconds)
+    if cache:
+        return cache
     
     try:
         # get html
@@ -101,21 +132,16 @@ async def extract(url: str, cache_seconds: int = 600):
             raise Exception("HTML is empty")
 
         # clean up html
-        # html = await cleanUpHtml(html)
-        print(html)
+        html = await cleanUpHtml(html)
         
         extract_result = trafilatura_extract(html, output_format='json',
-                                url=url, include_images=False)
+                                url=url, include_images=False, with_metadata=True)
         
-        print(extract_result)
         extract_data = json.loads(extract_result)
         await saveCache(url, extract_data)
-        return {
-            # "html": html,
-            "extract_data": extract_data
-        }
+        return extract_data
     
     except Exception as e:
-        raise 
+        raise e
     
     

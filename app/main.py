@@ -14,8 +14,14 @@ app = FastAPI(
     lifespan=lifespan,
     title="simple-url-extractor API",
     description="""
+    This is a simple URL extractor API.
 """,
-    servers=[],
+    servers=[
+        {
+            "url": "https://xxxx.xxx.jp",
+            "description": "Prod Server"
+        }
+    ],
     version="0.0.1",
 )
 
