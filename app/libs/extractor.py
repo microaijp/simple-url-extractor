@@ -27,7 +27,7 @@ async def getHTML(url: str) -> str:
     }
     
     try:
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(follow_redirects=True) as client:
             response = await client.get(url, headers=headers, timeout=15)
             response.raise_for_status()
         
