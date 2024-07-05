@@ -16,12 +16,12 @@ app = FastAPI(
     description="""
     This is a simple URL extractor API.
 """,
-    servers=[
-        {
-            "url": "http://localhost:8002",
-            "description": "Prod Server"
-        }
-    ],
+    # servers=[
+    #     {
+    #         "url": "http://localhost:8002",
+    #         "description": "Prod Server"
+    #     }
+    # ],
     version="0.0.1",
 )
 

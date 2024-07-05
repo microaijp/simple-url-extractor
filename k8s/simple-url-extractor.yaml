@@ -21,7 +21,7 @@ spec:
         - name: micro
           image: ghcr.io/microaijp/simple-url-extractor:latest
           ports:
-            - containerPort: 8080
+            - containerPort: 8002
           tty: true
           stdin: true
       imagePullSecrets:
@@ -40,5 +40,5 @@ spec:
   ports:
   - port: 80
     name: http
-    targetPort: 8080
+    targetPort: 8002
     protocol: TCP
