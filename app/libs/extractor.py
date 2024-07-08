@@ -135,7 +135,7 @@ async def extract(url: str, cache_seconds: int = 600):
         html = await cleanUpHtml(html)
         
         extract_result = trafilatura_extract(html, output_format='json',
-                                url=url, include_images=False, with_metadata=True)
+                                url=url, include_images=True, with_metadata=True)
         
         if extract_result == None:
             raise Exception("No data extracted")
