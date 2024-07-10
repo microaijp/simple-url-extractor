@@ -102,7 +102,28 @@ async def cleanUpHtml(html: str):
     
     except Exception as e:
         raise e
+
+def make_absolute_urls(html_content, base_url):
+    from lxml import html
+    from urllib.parse import urljoin
+    tree = html.fromstring(html_content)
     
+    for elem in tree.xpath('//*[@href or @src or @data-src]'):
+        if elem.tag == 'a':
+            href = elem.get('href')
+            if href and not href.startswith(('http://', 'https://')):
+                elem.set('href', urljoin(base_url, href))
+        elif elem.tag == 'img':
+            src = elem.get('src')
+            data_src = elem.get('data-src')
+            if src and not src.startswith(('http://', 'https://')):
+                elem.set('src', urljoin(base_url, src))
+            if data_src and not data_src.startswith(('http://', 'https://')):
+                elem.set('data-src', urljoin(base_url, data_src))
+    
+    return html.tostring(tree, encoding='unicode')
+
+
 async def extract(url: str, cache_seconds: int = 600):
     """
     Extracts information from a given URL.
@@ -134,8 +155,11 @@ async def extract(url: str, cache_seconds: int = 600):
         # clean up html
         html = await cleanUpHtml(html)
         
+        # absolute urls
+        html = make_absolute_urls(html, url)
+        
         extract_result = trafilatura_extract(html, output_format='json',
-                                url=url, include_images=True, with_metadata=True)
+                                url=url, include_images=True, with_metadata=True, include_links=True)
         
         if extract_result == None:
             raise Exception("No data extracted")
