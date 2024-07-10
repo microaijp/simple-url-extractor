@@ -168,19 +168,24 @@ async def extract(url: str, cache_seconds: int = 600):
         def replace_img_tags(match):
             alt = match.group(1) if match.group(1) else match.group(4)
             src = match.group(2) if match.group(2) else match.group(3)
-            alt_text = alt if alt else 'image'
-            return f'[{alt_text}]({src})'
+            alt_text = alt if alt else '画像'
+            return f'111222333000-{src}-000333222111'
+            # return f'これは本文です。[{alt_text}]({src})'
 
         # alt属性がある場合を処理
         html = re.sub(img_tag_regex, replace_img_tags, html)
 
         extract_result = trafilatura_extract(html, output_format='json',
-                                include_images=True, with_metadata=True, include_links=True)
+                                include_images=True, with_metadata=True, include_links=True, favor_precision=True, url=url)
+        
         
         if extract_result == None:
             raise Exception("No data extracted")
         
         extract_data = json.loads(extract_result)
+        
+        extract_data["text"] = extract_data["text"].replace('111222333000-', '').replace('-000333222111', '')
+        extract_data["raw_text"] = extract_data["raw_text"].replace('111222333000-', '').replace('-000333222111', '')
         
         extract_data["source_hostname"] = extract_data["source-hostname"]
         del extract_data["source-hostname"]
