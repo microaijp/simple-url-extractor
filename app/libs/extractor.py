@@ -3,6 +3,7 @@ from trafilatura import extract as trafilatura_extract
 import chardet
 import httpx
 import json
+import re
 
 async def getHTML(url: str) -> str:
     """
@@ -158,8 +159,23 @@ async def extract(url: str, cache_seconds: int = 600):
         # absolute urls
         html = make_absolute_urls(html, url)
         
+        # extract_result = trafilatura_extract(html, output_format='json',
+        #                         url=url, include_images=True, with_metadata=True, include_links=True)
+        
+        # alt属性とsrc属性の順序に関係なくキャプチャする正規表現
+        img_tag_regex = r'<img[^>]*(?:alt="([^"]*)")?[^>]*src="([^"]+)"[^>]*>|<img[^>]*src="([^"]+)"[^>]*(?:alt="([^"]*)")?[^>]*>'
+
+        def replace_img_tags(match):
+            alt = match.group(1) if match.group(1) else match.group(4)
+            src = match.group(2) if match.group(2) else match.group(3)
+            alt_text = alt if alt else 'image'
+            return f'[{alt_text}]({src})'
+
+        # alt属性がある場合を処理
+        html = re.sub(img_tag_regex, replace_img_tags, html)
+
         extract_result = trafilatura_extract(html, output_format='json',
-                                url=url, include_images=True, with_metadata=True, include_links=True)
+                                include_images=True, with_metadata=True, include_links=True)
         
         if extract_result == None:
             raise Exception("No data extracted")
