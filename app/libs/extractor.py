@@ -158,6 +158,7 @@ async def extract(url: str, cache_seconds: int = 600):
         
         # absolute urls
         html = make_absolute_urls(html, url)
+        html = html.replace('figure', 'p')
         
         # extract_result = trafilatura_extract(html, output_format='json',
         #                         url=url, include_images=True, with_metadata=True, include_links=True)
