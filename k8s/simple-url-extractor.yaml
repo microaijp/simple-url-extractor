@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: simple-url-extractor
+  namespace: micro
+  labels:
+    app: simple-url-extractor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: simple-url-extractor
+  template:
+    metadata:
+      labels:
+        app: simple-url-extractor
+    spec:
+      # nodeSelector:
+      #   kubernetes.io/arch: "amd64"
+      containers:
+        - name: micro
+          image: ghcr.io/microaijp/simple-url-extractor:latest
+          ports:
+            - containerPort: 8002
+          tty: true
+          stdin: true
+      imagePullSecrets:
+        - name: ghcr-credentials-for-micro
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: simple-url-extractor
+  namespace: micro
+spec:
+  type: ClusterIP
+  selector:
+    app: simple-url-extractor
+  ports:
+  - port: 80
+    name: http
+    targetPort: 8002
+    protocol: TCP
